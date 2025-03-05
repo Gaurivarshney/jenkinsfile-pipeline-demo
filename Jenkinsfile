@@ -6,7 +6,9 @@ pipeline{
         maven 'mymaven'
     
     }
-    
+    triggers {
+        pollSCM('* * * * *') 
+    }
     stages{
         
         stage('Checkout Code')
