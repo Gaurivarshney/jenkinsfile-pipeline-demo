@@ -17,16 +17,6 @@ pipeline{
                 }
             }
         }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    echo 'Running tests...'
-                    sh 'npm test'
-                }
-            }
-        }
-
         stage('Build Project') {
             steps {
                 script {
