@@ -3,11 +3,13 @@ pipeline{
   tools{
     maven 'mymaven'
  }
-triggers { pollSCM('* * * * *') }
+triggers {
+pollSCM('* * * * *') 
+  }
 stages{
      stage('compile code') {
          steps{
-       sh 'mvn compile'
+            sh 'mvn compile'
           }
      }
       stage('test code') {
