@@ -1,22 +1,42 @@
 pipeline{
 agent any
-  tools{
-     maven 'mymaven'
-  }
+tool name: 'Nodejs', type: 'nodejs'
 
 stages{
 stage('clone Repo')
   {
     steps{
-       git 'https://github.com/Sonal0409/DevOpsCodeDemo.git'     
+       git 'https://github.com/Gaurivarshney/FoodDelivery_MERN.git'     
     }
   }
-stage('Build Code')
-  {
-    steps{
-       sh 'mvn package'   
-    }
-  }
+stage('Install Dependencies') {
+            steps {
+                sh '''
+                cd frontend && npm install
+                cd ../backend && npm install
+                '''
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                sh '''
+                cd frontend
+                npm run build
+                cp -r build ../backend/public
+                '''
+            }
+        }
+
+        stage('Package WAR (for Tomcat)') {
+            steps {
+                sh '''
+                mkdir -p package
+                cp -r backend/* package/
+                jar cvf mern-app.war -C package/ .
+                '''
+            }
+        }
 
 stage('Deploy Code')
   {
