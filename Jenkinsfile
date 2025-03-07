@@ -10,7 +10,7 @@ stages{
    stage('Checkout Code')
         {
             steps{
-                git branch:'main' url:'https://github.com/Sonal0409/DevOpsCodeDemo.git'
+                git branch:'main', url:'https://github.com/Sonal0409/DevOpsCodeDemo.git'
             }
         }
      stage('compile code') {
