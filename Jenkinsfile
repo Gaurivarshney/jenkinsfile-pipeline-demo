@@ -1,6 +1,8 @@
 pipeline{
     agent any
-    tool name: 'Nodejs', type: 'nodejs'
+    tools{
+        Nodejs 'nodejs'
+    }
     stages{
         stage('CLone'){
             steps{
