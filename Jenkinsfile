@@ -1,50 +1,39 @@
-pipeline{
-agent any
-tool name: 'Nodejs', type: 'nodejs'
-
-stages{
-stage('clone Repo')
-  {
-    steps{
-       git 'https://github.com/Gaurivarshney/FoodDelivery_MERN.git'     
+pipeline {
+    agent any
+    environment {
+        NODE_VERSION = '22.8.0'
     }
-  }
-stage('Install Dependencies') {
+    stages {
+        stage('Checkout') {
             steps {
-                sh '''
-                cd frontend && npm install
-                cd ../backend && npm install
-                '''
+                git 'https://github.com/Gaurivarshney/FoodDelivery_MERN.git'
             }
         }
-
+        stage('Install Node') {
+            steps {
+                sh 'node -v || nvm install ${NODE_VERSION}'
+            }
+        }
         stage('Build Frontend') {
             steps {
-                sh '''
-                cd frontend
-                npm run build
-                cp -r build ../backend/public
-                '''
+                dir('client') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
             }
         }
-
-        stage('Package WAR (for Tomcat)') {
+        stage('Build Backend') {
             steps {
-                sh '''
-                mkdir -p package
-                cp -r backend/* package/
-                jar cvf mern-app.war -C package/ .
-                '''
+                dir('server') {
+                    sh 'npm install'
+                    sh 'npm start'
+                }
             }
         }
-
-stage('Deploy Code')
-  {
-    steps{
-      deploy adapters: [tomcat9(credentialsId: 'tomcatCredentials', path: '', url: 'http://3.86.159.107:9090/')], contextPath: null, war: '**/*.war'
+       stage('deploy code') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'tomcatCredentials', path: '', url: 'http://3.86.159.107:9090/')], contextPath: null, war: '**/*.war'
+            }
+        }
     }
-  }
-}
-
-  
 }
