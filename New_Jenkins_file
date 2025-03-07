@@ -1,7 +1,7 @@
 pipeline{
  agent any
   tools{
-    name: 'mymaven', type: 'maven'
+    maven 'mymaven'
  }
 triggers { pollSCM('* * * * *') }
 stages{
