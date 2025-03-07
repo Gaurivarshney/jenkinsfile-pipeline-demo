@@ -1,39 +1,49 @@
-pipeline {
+pipeline{
     agent any
-    environment {
-        NODE_VERSION = '22.8.0'
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Gaurivarshney/FoodDelivery_MERN.git'
+    tool name: 'Nodejs', type: 'nodejs'
+    stages{
+        stage('CLone'){
+            steps{
+                git 'https://github.com/Gaurivarshney/React_Ecom_Website.git'
             }
         }
-        stage('Install Node') {
+        stage('Install Dependencies') {
             steps {
-                sh 'node -v || nvm install ${NODE_VERSION}'
-            }
-        }
-        stage('Build Frontend') {
-            steps {
-                dir('client') {
+                script {
+                    echo 'Installing project dependencies...'
                     sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo 'Running tests...'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build Project') {
+            steps {
+                script {
+                    echo 'Building the React app...'
                     sh 'npm run build'
                 }
             }
         }
-        stage('Build Backend') {
+
+        stage('Deploy') {
             steps {
-                dir('server') {
-                    sh 'npm install'
-                    sh 'npm start'
+                script {
+                    echo 'Deploying the app...'
+                    // Replace with your deployment steps
+                    sh 'cp -r build/* /var/www/html/react-ecom/'
                 }
             }
         }
-       stage('deploy code') {
-            steps {
-                deploy adapters: [tomcat9(credentialsId: 'tomcatCredentials', path: '', url: 'http://3.86.159.107:9090/')], contextPath: null, war: '**/*.war'
-            }
-        }
+    }
+
     }
 }
